@@ -1,0 +1,23 @@
+{
+  "name": "custom-domain-checks",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GitHub App that runs continuous DNS and TLS health checks on custom domains, including GitHub Pages, and opens an issue when a domain breaks. By CustomDomain™.",
+  "license": "MIT",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "check": "node --check server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks.git"
+  },
+  "homepage": "https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks#readme",
+  "bugs": {
+    "url": "https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/issues"
+  }
+}
