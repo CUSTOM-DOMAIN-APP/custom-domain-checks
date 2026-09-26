@@ -6,6 +6,20 @@ whose notes are its entry below.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.1.1] (2026-09-26)
+
+### Changed
+
+- What the App writes into repositories now uses the CustomDomain™ brand: the check run summary
+  ("Domain health checks by CustomDomain™"), the closing line of the check run text and the tracking
+  issue ("Run continuously by CustomDomain™ Checks"), the DNS resolution failure hint, and the
+  description of the `domain-health` label it creates.
+- Unchanged on purpose: the App name in the registration manifest (`Custom Domain Checks`) and the
+  registration pages that refer to the App by that name, because the name is fixed when the App is
+  registered on GitHub.
+
+The hosted instance picks this up when it is redeployed.
+
 ## [0.1.0] (2026-09-26)
 
 The first tagged release. `server.js` is unchanged since the service was written on 2026-07-15; this release
@@ -36,4 +50,5 @@ gives it a version and records what it does.
 - `package.json` with the version (private, no dependencies), this changelog, and the README and AGENTS.md
   in the shared CustomDomain™ structure.
 
+[0.1.1]: https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases/tag/v0.1.0

@@ -1,6 +1,6 @@
 {
   "name": "custom-domain-checks",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "GitHub App that runs continuous DNS and TLS health checks on custom domains, including GitHub Pages, and opens an issue when a domain breaks. By CustomDomain™.",
   "license": "MIT",

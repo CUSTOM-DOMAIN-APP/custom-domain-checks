@@ -2,7 +2,7 @@
 
 A GitHub App for continuous DNS and TLS health checks on custom domains, including GitHub Pages.
 
-**Status:** v0.1.0 · service deployed · public App listing not yet published
+**Status:** v0.1.1 · service deployed · public App listing not yet published
 
 [![release](https://img.shields.io/github/v/release/CUSTOM-DOMAIN-APP/custom-domain-checks?style=flat&color=1c1917&label=release)](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases)
 [![docs](https://img.shields.io/badge/docs-docs.customdomain.ai-1c1917?style=flat)](https://docs.customdomain.ai/docs)
@@ -16,7 +16,7 @@ A GitHub App for continuous DNS and TLS health checks on custom domains, includi
 | **Who it's for** | Anyone running a custom domain on GitHub Pages, and platforms that host tenant domains |
 | **Live at** | [customdomain.ai/github-app/health](https://customdomain.ai/github-app/health) · product: [customdomain.ai/custom-domains-for-saas](https://customdomain.ai/custom-domains-for-saas) |
 | **Stack** | Node 20 · zero runtime dependencies · Docker · one file, `server.js` |
-| **Status** | v0.1.0. The service is deployed and answering; the App itself is not registered yet, so `/github-app/health` reports `provisioned: false` |
+| **Status** | v0.1.1. The service is deployed and answering; the App itself is not registered yet, so `/github-app/health` reports `provisioned: false` |
 
 Point this at a repository with a custom domain and it runs a **Domain health** check on every push, then
 opens one tracking issue when the domain breaks and closes it when the domain is fixed. It is built by the
@@ -115,7 +115,7 @@ Never commit any of these values, and keep `/secrets` off the image.
 
 The version lives in `package.json` and follows [Semantic Versioning](https://semver.org/). Every version has
 a `vX.Y.Z` tag, a [GitHub release](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases) and a
-[CHANGELOG.md](./CHANGELOG.md) entry. The current version is **0.1.0**.
+[CHANGELOG.md](./CHANGELOG.md) entry. The current version is **0.1.1**.
 
 ## Limitations
 

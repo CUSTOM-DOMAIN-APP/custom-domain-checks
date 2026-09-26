@@ -1,4 +1,4 @@
-// Custom Domain Checks — GitHub App webhook service
+// CustomDomain™ Checks: GitHub App webhook service
 // Zero runtime dependencies (Node >= 20, core modules + global fetch only).
 // Verifies webhooks, discovers a repo's custom domain (GitHub Pages cname,
 // CNAME file, or customdomain.yml), runs 9 DNS/TLS health checks, and reports
@@ -152,7 +152,7 @@ async function healthChecks(domain, owner, meta) {
   const aaaa = await q(dns.resolve6.bind(dns), domain);
 
   // 1. resolution
-  if (!cname && !a && !aaaa) { add('DNS resolution', 'fail', `\`${domain}\` does not resolve. Create the records at your DNS provider, or connect it in one click via [Custom Domain](${PRODUCT}/one-click-dns-setup).`); }
+  if (!cname && !a && !aaaa) { add('DNS resolution', 'fail', `\`${domain}\` does not resolve. Create the records at your DNS provider, or connect it in one click via [CustomDomain™](${PRODUCT}/one-click-dns-setup).`); }
   else add('DNS resolution', 'pass', 'Domain resolves.');
 
   const isPages = meta.source !== 'customdomain.yml';
@@ -218,8 +218,8 @@ function renderReport(domain, meta, rows) {
   const warns = rows.filter((r) => r.level === 'warn').length;
   const verdict = fails ? `${fails} issue${fails > 1 ? 's' : ''} to fix` : warns ? `Looks good, ${warns} thing${warns > 1 ? 's' : ''} to review` : 'All checks passed';
   const table = ['| | Check | Detail |', '|---|---|---|', ...rows.map((r) => `| ${icon(r.level)} | ${r.name} | ${r.note} |`)].join('\n');
-  const summary = `**${verdict}** for \`${domain}\` (detected via ${meta.source}). Domain health checks by [Custom Domain](${PRODUCT}).`;
-  const text = `${table}\n\n---\n\nRun continuously by **Custom Domain Checks**. Tired of debugging DNS and TLS by hand? [Connect and monitor customer domains automatically](${PRODUCT}/custom-domains-for-saas) across 63 providers, with verification and certificates handled for you.`;
+  const summary = `**${verdict}** for \`${domain}\` (detected via ${meta.source}). Domain health checks by [CustomDomain™](${PRODUCT}).`;
+  const text = `${table}\n\n---\n\nRun continuously by **CustomDomain™ Checks**. Tired of debugging DNS and TLS by hand? [Connect and monitor customer domains automatically](${PRODUCT}/custom-domains-for-saas) across 63 providers, with verification and certificates handled for you.`;
   const conclusion = fails ? 'failure' : warns ? 'neutral' : 'success';
   return { summary, text, conclusion };
 }
@@ -250,7 +250,7 @@ async function runForRepo(inst, owner, repo, headSha) {
       const body = `${summary}\n\n${text}`;
       if (existing) await ghReq('PATCH', `/repos/${owner}/${repo}/issues/${existing.number}`, token, { body, state: 'open' });
       else {
-        await ghReq('POST', `/repos/${owner}/${repo}/labels`, token, { name: 'domain-health', color: '0B7285', description: 'Custom Domain health checks' }).catch(() => {});
+        await ghReq('POST', `/repos/${owner}/${repo}/labels`, token, { name: 'domain-health', color: '0B7285', description: 'CustomDomain™ health checks' }).catch(() => {});
         await ghReq('POST', `/repos/${owner}/${repo}/issues`, token, { title, body, labels: ['domain-health'] });
       }
     } else if (existing) {
