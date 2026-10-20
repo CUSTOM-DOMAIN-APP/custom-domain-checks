@@ -2,7 +2,7 @@
   "name": "custom-domain-checks",
   "version": "0.1.1",
   "private": true,
-  "description": "GitHub App that runs continuous DNS and TLS health checks on custom domains, including GitHub Pages, and opens an issue when a domain breaks. By CustomDomain™.",
+  "description": "DNS and SSL health checks for GitHub Pages custom domains, as a GitHub Action and a GitHub App that opens an issue when a domain breaks. By CustomDomain™.",
   "license": "MIT",
   "main": "server.js",
   "scripts": {

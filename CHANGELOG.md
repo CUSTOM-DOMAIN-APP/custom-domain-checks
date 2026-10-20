@@ -6,6 +6,30 @@ whose notes are its entry below.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [Unreleased]
+
+### Added
+
+- A GitHub Action (`action.yml`, composite, running `action/check-domain.js`). It checks the domain from the
+  `domain` input or the repository's `CNAME` file with the same `healthChecks` and `renderReport` the App uses,
+  required from `server.js` rather than copied, then writes the report to the job summary, annotates every check
+  that did not pass, sets `domain`, `conclusion`, `failures` and `warnings` outputs, and fails the step according
+  to `fail-on`.
+
+### Changed
+
+- `server.js` exports `healthChecks`, `renderReport` and `ghReq`, and only listens when run directly
+  (`node server.js`, as the Dockerfile does).
+- The Pages checks can be turned off for a domain (`pagesChecks: false`, the Action's `github-pages: false`).
+- The check run text now says DNS records are written at 62 providers and guided at the rest, from the census of
+  2026-10-20, instead of "across 63 providers".
+
+### Fixed
+
+- HTTPS enforcement no longer warns on every domain without Pages settings to read (a `customdomain.yml` domain,
+  or a `CNAME` file domain whose Pages API call failed): when there are no settings, the observed HTTP to HTTPS
+  redirect decides.
+
 ## [0.1.1] (2026-09-26)
 
 ### Changed

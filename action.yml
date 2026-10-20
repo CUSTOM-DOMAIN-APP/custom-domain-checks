@@ -1,0 +1,60 @@
+name: Custom Domain Checks
+description: DNS and SSL health checks for a GitHub Pages custom domain, by CustomDomain™. Annotates problems and fails the job on them.
+author: CustomDomain™ (customdomain.ai)
+branding:
+  icon: globe
+  color: gray-dark
+
+inputs:
+  domain:
+    description: The domain to check. Leave empty to read it from the CNAME file in the checked-out repository.
+    required: false
+    default: ''
+  cname-file:
+    description: Path of the CNAME file, relative to the workspace, used when domain is empty.
+    required: false
+    default: CNAME
+  github-pages:
+    description: Run the GitHub Pages checks (record target, Pages serving, domain verification). Set to false for a domain served elsewhere.
+    required: false
+    default: 'true'
+  pages-owner:
+    description: The user or organization whose <owner>.github.io the domain should point at. Defaults to the repository owner.
+    required: false
+    default: ''
+  token:
+    description: Token used only to read the repository's Pages settings (verification state, Enforce HTTPS). Needs pages read access.
+    required: false
+    default: ${{ github.token }}
+  fail-on:
+    description: When to fail the step. fail (any failed check), warn (any failed check or warning) or never.
+    required: false
+    default: fail
+
+outputs:
+  domain:
+    description: The domain that was checked.
+    value: ${{ steps.check.outputs.domain }}
+  conclusion:
+    description: success, neutral (warnings only) or failure, the same conclusion the GitHub App reports.
+    value: ${{ steps.check.outputs.conclusion }}
+  failures:
+    description: Number of failed checks.
+    value: ${{ steps.check.outputs.failures }}
+  warnings:
+    description: Number of checks to review.
+    value: ${{ steps.check.outputs.warnings }}
+
+runs:
+  using: composite
+  steps:
+    - id: check
+      shell: bash
+      run: node "$GITHUB_ACTION_PATH/action/check-domain.js"
+      env:
+        CDC_DOMAIN: ${{ inputs.domain }}
+        CDC_CNAME_FILE: ${{ inputs.cname-file }}
+        CDC_GITHUB_PAGES: ${{ inputs.github-pages }}
+        CDC_PAGES_OWNER: ${{ inputs.pages-owner }}
+        CDC_TOKEN: ${{ inputs.token }}
+        CDC_FAIL_ON: ${{ inputs.fail-on }}

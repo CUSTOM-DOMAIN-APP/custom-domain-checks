@@ -1,8 +1,9 @@
-# CustomDomain™ Checks
+# Custom Domain Checks: DNS and SSL health checks for GitHub Pages custom domains
 
-A GitHub App for continuous DNS and TLS health checks on custom domains, including GitHub Pages.
+DNS, CAA and SSL certificate checks for the custom domain on a GitHub Pages site (or any domain), as a GitHub
+Action you can run today and a GitHub App. By CustomDomain™.
 
-**Status:** v0.1.1 · service deployed · public App listing not yet published
+**Status:** v0.1.1 · GitHub Action in this repository · App service deployed, App not registered on GitHub yet
 
 [![release](https://img.shields.io/github/v/release/CUSTOM-DOMAIN-APP/custom-domain-checks?style=flat&color=1c1917&label=release)](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases)
 [![docs](https://img.shields.io/badge/docs-docs.customdomain.ai-1c1917?style=flat)](https://docs.customdomain.ai/docs)
@@ -12,14 +13,15 @@ A GitHub App for continuous DNS and TLS health checks on custom domains, includi
 
 |  |  |
 |---|---|
-| **What it is** | A GitHub App that grades the DNS and TLS behind a repository's custom domain |
+| **What it is** | A GitHub Action and a GitHub App that grade the DNS and TLS behind a repository's custom domain |
 | **Who it's for** | Anyone running a custom domain on GitHub Pages, and platforms that host tenant domains |
 | **Live at** | [customdomain.ai/github-app/health](https://customdomain.ai/github-app/health) · product: [customdomain.ai/custom-domains-for-saas](https://customdomain.ai/custom-domains-for-saas) |
-| **Stack** | Node 20 · zero runtime dependencies · Docker · one file, `server.js` |
-| **Status** | v0.1.1. The service is deployed and answering; the App itself is not registered yet, so `/github-app/health` reports `provisioned: false` |
+| **Stack** | Node 20 · zero runtime dependencies · `server.js` for the App (Docker) · `action.yml` for the Action, reusing the same checks |
+| **Status** | v0.1.1. The Action runs from this repository. The App service is deployed and answering, but the App must be registered on GitHub before anyone can install it, and it is not yet: `/github-app/health` reports `provisioned: false` (checked 2026-10-20) |
 
-Point this at a repository with a custom domain and it runs a **Domain health** check on every push, then
-opens one tracking issue when the domain breaks and closes it when the domain is fixed. It is built by the
+Add the Action to a workflow and every run grades the domain in the job summary, with an annotation for each
+problem. Install the App on a repository and it runs a **Domain health** check on every push, then opens one
+tracking issue when the domain breaks and closes it when the domain is fixed. It is built by the
 team behind [CustomDomain™](https://customdomain.ai), which does the same job continuously for platforms
 hosting their users' domains.
 
@@ -43,10 +45,58 @@ almost nobody has done it.
 - Opens one deduplicated issue labeled `domain-health` when something is wrong, updates it in place, and closes it when the domain recovers
 - Offers a **Re-check** button on the check run, so you can re-run after fixing DNS without another push
 - Warns 30 days before a certificate expires, rather than after
+- Runs the same checks as a GitHub Action step, with a job summary, annotations and a failing step when something breaks
 
-## Quickstart
+## Quickstart: the GitHub Action
 
-Run the service yourself. It needs a writable volume for the credentials the App registration writes back:
+The same checks run as a step in your own workflow, with nothing to register or host. `action.yml` at the root of
+this repository is a composite action: it runs `action/check-domain.js`, which requires the check functions from
+`server.js` rather than copying them, so the App and the Action report the same thing. It reads the domain from
+the `CNAME` file in the checked-out repository (or the `domain` input), writes the report to the job summary,
+adds an error or warning annotation for every check that did not pass, and fails the step on a failed check.
+
+```yaml
+# .github/workflows/domain-health.yml
+name: Domain health
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "17 6 * * *" # daily, so an expiring certificate is caught between pushes
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: read # lets the step read the verification state and the Enforce HTTPS setting
+
+jobs:
+  domain-health:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: CUSTOM-DOMAIN-APP/custom-domain-checks@main
+```
+
+Pin `@main` to a release tag or a commit SHA once one that contains `action.yml` is published.
+
+| Input | Default | What it does |
+|---|---|---|
+| `domain` | empty | The domain to check. Empty reads the first line of the `CNAME` file. |
+| `cname-file` | `CNAME` | Path of that file, relative to the workspace (for example `docs/CNAME`). |
+| `github-pages` | `true` | Run the Pages checks: record target, Pages serving, domain verification. Set `false` for a domain served elsewhere; DNS, CAA, certificate and HTTPS checks still run. |
+| `pages-owner` | the repository owner | The account whose `<owner>.github.io` the domain should point at. |
+| `token` | `github.token` | Used only to read the repository's Pages settings. Without `pages: read`, verification shows as `unknown` and HTTPS enforcement is judged by the redirect alone. |
+| `fail-on` | `fail` | `fail` fails the step on a failed check, `warn` also on a warning, `never` only reports. |
+
+Outputs: `domain`, `conclusion` (`success`, `neutral` or `failure`, as the App reports it), `failures` and
+`warnings`. The step runs on the runner's `node`: every GitHub-hosted runner has it, and a self-hosted runner
+needs Node 20 or later.
+
+## Run the App yourself
+
+The App has to be registered on GitHub before it can be installed, and the hosted instance is not registered yet.
+Until it is, use the Action above, or register and run your own instance. It needs a writable volume for the
+credentials the App registration writes back:
 
 ```bash
 docker build -t custom-domain-checks .
@@ -86,7 +136,9 @@ It subscribes to `push`, `check_suite`, `check_run`, `page_build`, `installation
 ## Repository layout
 
 ```text
-server.js      the whole service: routes, webhook verification, probes, reporting
+server.js      the App service: routes, webhook verification, probes, reporting; exports the checks
+action.yml     the GitHub Action: inputs, outputs, a composite step that runs action/check-domain.js
+action/        check-domain.js: reads the domain, runs the checks from server.js, writes summary and annotations
 Dockerfile     node:20-alpine, runs as the node user, /secrets volume, port 8787
 package.json   the version (private, no dependencies) and a start script
 CHANGELOG.md   one entry per version, matching the tags and GitHub releases
@@ -119,9 +171,10 @@ a `vX.Y.Z` tag, a [GitHub release](https://github.com/CUSTOM-DOMAIN-APP/custom-d
 
 ## Limitations
 
-- The public App listing is not published, so installation today means running your own instance.
+- The App is not registered on GitHub, so installing it today means registering and running your own instance. The Action needs neither.
 - The Pages-specific checks (record targets, serving, verification) only run when the domain came from Pages. Domains listed in `customdomain.yml` get the transport checks: CAA, certificate, HTTPS enforcement and hygiene.
-- Checks are event-driven, not scheduled. A domain that breaks between pushes is caught on the next push, `check_suite`, or **Re-check**.
+- The App's checks are event-driven, not scheduled. A domain that breaks between pushes is caught on the next push, `check_suite`, or **Re-check**. The Action runs on whatever triggers you give it, including a `schedule`.
+- Run from a GitHub-hosted runner, the Action sees DNS and TLS from that runner's network. A domain that answers differently by region can pass there and fail elsewhere.
 - State is a single JSON file on a volume. It is one process, not a cluster.
 
 ## Related
