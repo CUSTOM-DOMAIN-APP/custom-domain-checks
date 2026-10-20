@@ -5,6 +5,8 @@
 // via the Checks API plus a single deduped "Domain health" tracking issue.
 // It also serves the App Manifest registration flow at /github-app/register
 // and /github-app/manifest-callback so the app can be created with one click.
+// The same checks run in the GitHub Action (action.yml, action/check-domain.js),
+// which requires this file for them; the server only listens when run directly.
 'use strict';
 const http = require('http');
 const https = require('https');
@@ -155,7 +157,9 @@ async function healthChecks(domain, owner, meta) {
   if (!cname && !a && !aaaa) { add('DNS resolution', 'fail', `\`${domain}\` does not resolve. Create the records at your DNS provider, or connect it in one click via [CustomDomain™](${PRODUCT}/one-click-dns-setup).`); }
   else add('DNS resolution', 'pass', 'Domain resolves.');
 
-  const isPages = meta.source !== 'customdomain.yml';
+  // GitHub Pages checks run for Pages and CNAME-file domains, unless the caller
+  // turns them off (the Action's github-pages input).
+  const isPages = meta.source !== 'customdomain.yml' && meta.pagesChecks !== false;
   if (isPages && (a || aaaa || cname)) {
     // 2 + 3. record type + target correctness
     if (apex) {
@@ -199,7 +203,9 @@ async function healthChecks(domain, owner, meta) {
     else add('TLS certificate', 'pass', `Certificate valid, expires in ${days} days.`);
   }
   // 8. HTTPS enforcement
-  const enforced = meta.pages && meta.pages.https_enforced;
+  // Without Pages settings to read (a customdomain.yml domain, or the Action with no
+  // Pages access), the observed redirect alone decides.
+  const enforced = meta.pages ? meta.pages.https_enforced : true;
   const redir = await httpRedirectProbe(domain);
   if (enforced && redir.toHttps) add('HTTPS enforcement', 'pass', 'HTTP redirects to HTTPS.');
   else add('HTTPS enforcement', 'warn', `HTTP is not redirecting to HTTPS. ${isPages ? 'Enable "Enforce HTTPS" in Settings, Pages.' : 'Configure a redirect from HTTP to HTTPS.'}`);
@@ -219,7 +225,7 @@ function renderReport(domain, meta, rows) {
   const verdict = fails ? `${fails} issue${fails > 1 ? 's' : ''} to fix` : warns ? `Looks good, ${warns} thing${warns > 1 ? 's' : ''} to review` : 'All checks passed';
   const table = ['| | Check | Detail |', '|---|---|---|', ...rows.map((r) => `| ${icon(r.level)} | ${r.name} | ${r.note} |`)].join('\n');
   const summary = `**${verdict}** for \`${domain}\` (detected via ${meta.source}). Domain health checks by [CustomDomain™](${PRODUCT}).`;
-  const text = `${table}\n\n---\n\nRun continuously by **CustomDomain™ Checks**. Tired of debugging DNS and TLS by hand? [Connect and monitor customer domains automatically](${PRODUCT}/custom-domains-for-saas) across 63 providers, with verification and certificates handled for you.`;
+  const text = `${table}\n\n---\n\nRun continuously by **CustomDomain™ Checks**. Tired of debugging DNS and TLS by hand? [Connect and monitor customer domains](${PRODUCT}/custom-domains-for-saas): DNS records written for you at 62 providers and guided at the rest, with verification and certificates handled.`;
   const conclusion = fails ? 'failure' : warns ? 'neutral' : 'success';
   return { summary, text, conclusion };
 }
@@ -361,4 +367,8 @@ const server = http.createServer((req, res) => {
   }
   return send(res, 404, 'not found');
 });
-server.listen(PORT, () => log(`custom-domain-checks listening on :${PORT} (provisioned=${ready()})`));
+if (require.main === module) {
+  server.listen(PORT, () => log(`custom-domain-checks listening on :${PORT} (provisioned=${ready()})`));
+}
+
+module.exports = { healthChecks, renderReport, ghReq };
