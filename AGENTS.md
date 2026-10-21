@@ -35,9 +35,9 @@ curl https://api.customdomain.ai/v1/connections/<ID> \
 
 ## MCP server (for agents)
 
-Hosted MCP endpoint: `https://mcp.customdomain.ai/mcp` (streamable HTTP; an API key, OAuth client credentials via `https://mcp.customdomain.ai/token`, or a delegated agent token a person approves over OAuth at `https://api.customdomain.ai`). Server `customdomain-mcp` version 0.5.0, protocol revision `2025-06-18`. Registered in the MCP registry as `ai.customdomain/mcp`.
+Hosted MCP endpoint: `https://mcp.customdomain.ai/mcp` (streamable HTTP; an API key, OAuth client credentials via `https://mcp.customdomain.ai/token`, or a delegated agent token a person approves over OAuth at `https://api.customdomain.ai`). Server `customdomain-mcp` version 0.6.0, protocol revision `2025-06-18`. Registered in the MCP registry as `ai.customdomain/mcp`.
 
-Seventeen tools: `search-domain-availability`, `generate-domain-suggestions`, `create-domain-order`, `connect-domain`, `check-connection-status`, `check-order-status`, `reapply-connection`, `disconnect-domain`, `discover-provider`, `forward-domain`, `add-email`, `list-connections`, `check-certificate-status`, `recheck-connection`, `diagnose-connection`, `check-billing-status`, `list-domain-orders`. Purchases (`create-domain-order`) are off on the hosted service.
+Twenty tools: `search-domain-availability`, `generate-domain-suggestions`, `create-domain-order`, `connect-domain`, `check-connection-status`, `check-order-status`, `reapply-connection`, `disconnect-domain`, `discover-provider`, `forward-domain`, `add-email`, `list-connections`, `check-certificate-status`, `recheck-connection`, `diagnose-connection`, `check-billing-status`, `list-domain-orders`, `check-nameserver-status`, `migrate-nameservers`, `rollback-nameservers`. Purchases (`create-domain-order`) are off on the hosted service. The last three move a connected domain's nameservers to the application's DNS host and back; both moves take `confirm: true`, sent only after the person agreed, and an agent token cannot choose where the nameservers go.
 
 **No tool accepts DNS records as input.** Record values are computed server-side by the control plane from vetted templates, which closes off prompt-injection paths that would otherwise end in an arbitrary DNS write. Do not write code that tries to pass records to a tool.
 
