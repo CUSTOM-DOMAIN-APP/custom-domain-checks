@@ -1,23 +1,9 @@
 # Custom Domain Checks: DNS and SSL health checks for GitHub Pages custom domains
 
 DNS, CAA and SSL certificate checks for the custom domain on a GitHub Pages site (or any domain), as a GitHub
-Action you can run today and a GitHub App. By CustomDomain™.
+Action you can run today and a GitHub App you can self-host.
 
-**Status:** v0.1.1 · GitHub Action in this repository · App service deployed, App not registered on GitHub yet
-
-[![release](https://img.shields.io/github/v/release/CUSTOM-DOMAIN-APP/custom-domain-checks?style=flat&color=1c1917&label=release)](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases)
-[![docs](https://img.shields.io/badge/docs-docs.customdomain.ai-1c1917?style=flat)](https://docs.customdomain.ai/docs)
-[![license](https://img.shields.io/badge/license-MIT-1c1917?style=flat)](./LICENSE)
-
-[Website](https://customdomain.ai) · [Docs](https://docs.customdomain.ai/docs) · [Console](https://app.customdomain.ai) · [Service health](https://customdomain.ai/github-app/health) · [Releases](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases) · [Changelog](./CHANGELOG.md)
-
-|  |  |
-|---|---|
-| **What it is** | A GitHub Action and a GitHub App that grade the DNS and TLS behind a repository's custom domain |
-| **Who it's for** | Anyone running a custom domain on GitHub Pages, and platforms that host tenant domains |
-| **Live at** | [customdomain.ai/github-app/health](https://customdomain.ai/github-app/health) · product: [customdomain.ai/custom-domains-for-saas](https://customdomain.ai/custom-domains-for-saas) |
-| **Stack** | Node 20 · zero runtime dependencies · `server.js` for the App (Docker) · `action.yml` for the Action, reusing the same checks |
-| **Status** | v0.1.1. The Action runs from this repository. The App service is deployed and answering, but the App must be registered on GitHub before anyone can install it, and it is not yet: `/github-app/health` reports `provisioned: false` (checked 2026-10-20) |
+[Custom domain troubleshooting in the docs](https://customdomain.ai/gh/checks-saas) · [Releases](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases) · [Changelog](./CHANGELOG.md)
 
 Add the Action to a workflow and every run grades the domain in the job summary, with an annotation for each
 problem. Install the App on a repository and it runs a **Domain health** check on every push, then opens one
@@ -177,6 +163,39 @@ a `vX.Y.Z` tag, a [GitHub release](https://github.com/CUSTOM-DOMAIN-APP/custom-d
 - Run from a GitHub-hosted runner, the Action sees DNS and TLS from that runner's network. A domain that answers differently by region can pass there and fail elsewhere.
 - State is a single JSON file on a volume. It is one process, not a cluster.
 
+## For platforms that host other people's domains
+
+These checks look at one repository's domain. If your product connects your customers' own domains,
+CustomDomain™ checks every live domain hourly and writes the records at the customer's DNS provider where the
+provider allows it: [custom domains for SaaS](https://customdomain.ai/custom-domains-for-saas).
+
+<!-- facts:start -->
+## Facts and sources
+
+Read from the live endpoints on 2026-10-30. Every number in this README traces to a row here or to a source named
+where it is used. If one does not, open an issue with the file and line.
+
+| Fact | Value | Source |
+|---|---|---|
+| DNS providers known | 189 | [`/v1/providers/census`](https://api.customdomain.ai/v1/providers/census) |
+| Automatic path | 73: 66 by scoped API key, 6 by provider sign-in (OAuth), 1 by one-click setup (Domain Connect) | census `mode` |
+| Exact records and provider steps | 116 | census `mode` |
+| Going live | No TXT ownership record. A domain goes `live` when every record resolves. Statuses: `pending`, `propagating`, `live`, `failed` | [Connections](https://docs.customdomain.ai/docs/concepts/connections) |
+| HTTPS on the CustomDomain™ edge | Growth and up. On Starter and Startup, domains point at your servers and you serve TLS | [`/v1/plans`](https://api.customdomain.ai/v1/plans) |
+| Plans | Starter $10 a month, 10 domains a year, hard cap. Startup $149 a month, 600 a year. Growth $649 a month, 600 a year. Premium and Enterprise by contract, 12,000 a year. 14 day trial on Starter, Startup and Growth | [`/v1/plans`](https://api.customdomain.ai/v1/plans) |
+| Free to start | A new workspace connects its first ten domains free. No card needed to sign up | [Plans and quotas](https://docs.customdomain.ai/docs/billing/plans-and-quotas) |
+| REST API | 163 operations on 140 paths, OpenAPI 3.1.0 | [`/v1/openapi.json`](https://api.customdomain.ai/v1/openapi.json) |
+| MCP server | `customdomain-mcp` 0.6.0, 20 tools. Buying a domain through MCP is off on the hosted service | [`mcp.json`](https://mcp.customdomain.ai/.well-known/agent/mcp.json) |
+
+Check the provider split yourself:
+
+```sh
+curl -s https://api.customdomain.ai/v1/providers/census \
+  | python3 -c 'import json,sys,collections; d=json.load(sys.stdin); print(d["count"], collections.Counter(p["mode"] for p in d["providers"]))'
+# 189 Counter({'manual': 116, 'api': 66, 'oauth': 6, 'dc': 1})
+```
+<!-- facts:end -->
+
 ## Related
 
 - [customdomain-sdk](https://github.com/CUSTOM-DOMAIN-APP/customdomain-sdk): the JavaScript and TypeScript client for letting your users connect their own domain
@@ -184,15 +203,11 @@ a `vX.Y.Z` tag, a [GitHub release](https://github.com/CUSTOM-DOMAIN-APP/custom-d
 - [awesome-custom-domains](https://github.com/CUSTOM-DOMAIN-APP/awesome-custom-domains): the map of the whole space
 - [docs](https://github.com/CUSTOM-DOMAIN-APP/docs): source of [docs.customdomain.ai](https://docs.customdomain.ai/docs)
 
-## Support
+## Support and license
 
-- **Docs:** [docs.customdomain.ai](https://docs.customdomain.ai/docs)
-- **Questions and ideas:** [GitHub Discussions](https://github.com/CUSTOM-DOMAIN-APP/docs/discussions)
-- **Bugs and corrections:** [open an issue](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/issues) on this repository
-- **Service status:** [status.customdomain.ai](https://status.customdomain.ai)
-- **Account and billing:** connect@customdomain.ai
-- **Security:** report privately to security@customdomain.ai, never in a public issue. Policy: [app.customdomain.ai/security](https://app.customdomain.ai/security)
-
-## License
+Questions go to [GitHub Discussions](https://github.com/CUSTOM-DOMAIN-APP/docs/discussions) and corrections to
+[this repository's issues](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/issues). Account and billing:
+connect@customdomain.ai. Report security issues privately to security@customdomain.ai, never in a public issue
+([policy](https://app.customdomain.ai/security)).
 
 [MIT](./LICENSE). CustomDomain™ is a product of EverJust Company.
