@@ -3,7 +3,7 @@
 DNS, CAA and SSL certificate checks for the custom domain on a GitHub Pages site (or any domain), as a GitHub
 Action you can run today and a GitHub App you can self-host.
 
-[Custom domain troubleshooting in the docs](https://customdomain.ai/gh/checks) · [Releases](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases) · [Changelog](./CHANGELOG.md)
+[Custom domain troubleshooting in the docs](https://customdomain.ai/gh/checks-saas) · [Releases](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases) · [Changelog](./CHANGELOG.md)
 
 Add the Action to a workflow and every run grades the domain in the job summary, with an annotation for each
 problem. Install the App on a repository and it runs a **Domain health** check on every push, then opens one
