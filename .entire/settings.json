@@ -1,0 +1,45 @@
+{
+  "enabled": true,
+  "strategy_options": {
+    "checkpoint_remote": {
+      "provider": "github",
+      "repo": "CUSTOM-DOMAIN-APP/entire-checkpoints"
+    },
+    "push_sessions": false
+  },
+  "telemetry": false,
+  "checkpoints": {
+    "primary": {
+      "type": "git-refs"
+    }
+  },
+  "redaction": {
+    "betterleaks": {
+      "enabled": true
+    },
+    "goredact": {
+      "enabled": true
+    },
+    "pii": {
+      "enabled": true,
+      "email": true,
+      "phone": true,
+      "address": false
+    },
+    "custom_redactions": {
+      "onepassword_service_token": "ops_[A-Za-z0-9_\\-]{20,}",
+      "onepassword_secret_key": "A3-[A-Z0-9]{6}-[A-Z0-9-]{20,}",
+      "anthropic_key": "sk-ant-[A-Za-z0-9_\\-]{20,}",
+      "openai_key": "sk-(proj-|svcacct-)?[A-Za-z0-9_\\-]{20,}",
+      "stripe_key": "(sk|rk|pk|whsec)_(live|test)_[A-Za-z0-9]{10,}",
+      "github_token": "(ghp|gho|ghu|ghs|ghr)_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{40,}",
+      "aws_access_key": "(AKIA|ASIA)[A-Z0-9]{16}",
+      "slack_token": "xox[abprs]-[A-Za-z0-9-]{10,}",
+      "supabase_token": "sbp_[A-Za-z0-9]{30,}",
+      "private_key_block": "-----BEGIN [A-Z ]*PRIVATE KEY-----",
+      "bearer_header": "(?i)(authorization|x-api-key|api-key)\\s*[:=]\\s*\\\"?(bearer\\s+)?[A-Za-z0-9._~+/=\\-]{12,}",
+      "env_secret_assignment": "(?i)[A-Z0-9_]*(KEY|TOKEN|SECRET|PASSWORD|PASSWD|CREDENTIAL)[A-Z0-9_]*\\s*[=:]\\s*\\\"?[^\\s\\\"']{8,}",
+      "url_credentials": "[a-z][a-z0-9+.\\-]*://[^/\\s:@]+:[^/\\s@]{4,}@"
+    }
+  }
+}
