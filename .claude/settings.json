@@ -63,8 +63,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "sh -c 'PATH=\"$HOME/.local/bin:$PATH\"; if ! command -v entire >/dev/null 2>&1; then exit 0; fi; entire hooks claude-code stop; rc=$?; f=\"$CLAUDE_PROJECT_DIR/.claude/hooks/entire-cloud.sh\"; [ -f \"$f\" ] && bash \"$f\" push-bg >/dev/null 2>&1; exit $rc'",
-            "timeout": 120
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/require-plain-summary.py\"",
+            "timeout": 10
           }
         ]
       },
@@ -73,8 +73,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$CLAUDE_PROJECT_DIR/.claude/hooks/require-plain-summary.py\"",
-            "timeout": 10
+            "command": "sh -c 'PATH=\"$HOME/.local/bin:$PATH\"; if ! command -v entire >/dev/null 2>&1; then exit 0; fi; entire hooks claude-code stop; rc=$?; f=\"$CLAUDE_PROJECT_DIR/.claude/hooks/entire-cloud.sh\"; [ -f \"$f\" ] && bash \"$f\" push-bg >/dev/null 2>&1; exit $rc'",
+            "timeout": 120
           }
         ]
       }
