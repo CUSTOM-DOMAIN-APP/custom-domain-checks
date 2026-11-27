@@ -1,0 +1,14 @@
+# macOS and editors
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Local environment and logs (never commit credentials)
+.env
+.env.*
+!.env.example
+*.log
+
+# Node
+node_modules/
