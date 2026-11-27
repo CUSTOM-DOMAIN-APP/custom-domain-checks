@@ -1,7 +1,8 @@
-# Custom Domain Checks: DNS and SSL health checks for GitHub Pages custom domains
-
-DNS, CAA and SSL certificate checks for the custom domain on a GitHub Pages site (or any domain), as a GitHub
-Action you can run today and a GitHub App you can self-host.
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/media/customdomain-mark-dark.png"><img src=".github/media/customdomain-mark.png" alt="CustomDomain" width="56"></picture></p>
+<h1 align="center">Custom domain checks for GitHub Pages</h1>
+<p align="center"><b>DNS, CAA and SSL checks for a GitHub Pages custom domain, as a GitHub Action and a self-hosted GitHub App.</b></p>
+<p align="center"><a href="https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/blob/main/action.yml"><img src="https://img.shields.io/badge/GitHub%20Action-domain%20health-1c1917?style=flat&logo=githubactions&logoColor=white" alt="GitHub Action"></a> <a href="https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases"><img src="https://img.shields.io/github/v/release/CUSTOM-DOMAIN-APP/custom-domain-checks?style=flat&color=1c1917&logo=github&logoColor=white&label=release" alt="release"></a> <a href="https://docs.customdomain.ai/docs"><img src="https://img.shields.io/badge/docs-docs.customdomain.ai-1c1917?style=flat" alt="docs"></a> <a href="https://www.producthunt.com/products/custom-domain"><img src="https://img.shields.io/badge/Product%20Hunt-CustomDomain-1c1917?style=flat&logo=producthunt&logoColor=white" alt="Product Hunt"></a></p>
+<p align="center"><picture><source media="(prefers-color-scheme: dark)" srcset=".github/media/widget-flow-dark.png"><img src=".github/media/widget-flow-light.png" alt="The CustomDomain widget: your user types their domain, signs in at their provider, and it goes live" width="860"></picture></p>
 
 [Custom domain troubleshooting in the docs](https://customdomain.ai/gh/checks-saas) · [Releases](https://github.com/CUSTOM-DOMAIN-APP/custom-domain-checks/releases) · [Changelog](./CHANGELOG.md)
 
